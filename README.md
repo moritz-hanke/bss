@@ -4,7 +4,7 @@ Some take aways (at least for me) from working on the issues raised by the revie
 
 ## I. MCC vs F1: in the range of $0$ and $\alpha * 0.1348845$
 In our simulation study the F1 and MCC values are very similar in all settings. Why does this happen? Especially with MCC ranging in theory from -1 (complete disaster with respect to classification) to +1 (overachiever) while F1 has a range from 0 to 1?
-I argue that the similarity between F1 and MCC values in our simulation study comes from the excess of negatives which are common in high dimensional variable selection problems. To be more specific, MCC is defined as
+I think that the similarity between F1 and MCC values in our simulation study comes from the excess of negatives which are common in high dimensional variable selection problems. To be more specific, MCC is defined as
 
 $$\frac{(TP * TN) - (FP * FN)}{\sqrt{(TP + FP) * (TP + FN) * (TN + FP) * (TN +FN)}}$$
  	
