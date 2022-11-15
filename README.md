@@ -22,7 +22,7 @@ Assuming sparsity implies having a rather big TN compared to FP, FN and TP for s
 
 E.g.: in our medium dimensional setting we have $p=500$ variable of which $s=10$ are positives (true direct predictors) and the subset sizes range over $k=1,...,15$ for BSS (of course for Enet and Lasso we also have bigger subset sizes but for the moment we are only interested in the smaller ones). This means $TP \leq 10$, $FP \leq 15$, $FN \leq 10$ and $TN \geq 475$.
 
-So it might be fair to say that $(TN + FP) \approx (TN +FN) \approx TN$ is not too rough approximation. Hence, the second term of the previous MCC formulation is rather small in settings similar to ours since it is dominated by 
+So it might be fair to say that $(TN + FP) \approx (TN +FN) \approx TN$ is not a too rough approximation. Hence, the second term of the previous MCC formulation is rather small in settings similar to ours since it is dominated by 
 $$\sqrt{(TN + FP) * (TN +FN)} \approx \sqrt{TN} * \sqrt{TN} = TN$$ 
 in the denominator. Therefore I will neglect this term for my further argumentation. 
 
