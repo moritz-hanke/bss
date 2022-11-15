@@ -43,18 +43,18 @@ For the special case $k=s$ we have $MCC_{oTN} = F1$.
 
 So far we know that the $MCC_{oTN}$ will always be at least as high as the F1 score (assuming an excess of TN). But we still want to know the range of their difference. To answer this question we first have to take the TP in numerators into account. For $k < s$ its highest possible value is $k$ while for $k \geq s$ it is $s$. Therefore we define
 
-$$\Delta(k,s) := \frac{\min(k,s)}{\sqrt{k*s}} - \frac{\min(k,s)}{0.5*(k+s)}$$
+$$\Delta(k,s) := \frac{\min(k,s)}{\sqrt{k * s}} - \frac{\min(k,s)}{0.5*(k+s)}.$$
 
 as the difference with the highest number of possible TP for a given subset size $k$. NOTE: we allow also the case $k>s$.
 
 While it might be possible to find the range of $\Delta(k,s)$ algebraically I used Wolfram Alpha to find it (numerically) to speed things up:  
 $$0 \leq \Delta(k,s) \leq 0.1348845$$
-We now have fixed upper and lower limits for the difference between the two performance measures. And it is not really big. And it gets even smaller since we have only looked at the case when all selected variables are TPs ( $k < s$ ) or all positives have been selected ( $ k \geq s$ ), i.e. the highest possible numerator. As soon as the number of TPs gets smaller the upper limit for the range gets smaller too.
+We now have fixed upper and lower limits for the difference between the two performance measures for all $k,s \geq 1$. And it is not really big. And it gets even smaller since we have only looked at the case when all selected variables are TPs ( $k < s$ ) or all positives have been selected ( $ k \geq s$ ), i.e. the highest possible numerator. As soon as the number of TPs gets smaller the upper limit for the range gets smaller too.
 
 Augmenting $\Delta(k,s)$ with $0 < \alpha \leq 1$ to denote the proportion of possible TPs found for a given subset size $k$ we get
-$$\Delta(k,s, \alpha) := \frac{\alpha \min(k,s)}{\sqrt{k*s}} - \frac{\alpha \min(k,s)}{0.5*(k+s)}.$$
+$$\Delta(k,s, \alpha) := \frac{\alpha \min(k,s)}{\sqrt{k * s}} - \frac{\alpha \min(k,s)}{0.5*(k+s)}.$$
 From this it follows directly 
-$$0 \leq \Delta(k,s, \alpha) \leq \alpha * 0.1348845.$$
+$$0 \leq \Delta(k,s, \alpha) \leq \alpha * 0.1348845 \leq 0.1348845.$$
 
 
 
