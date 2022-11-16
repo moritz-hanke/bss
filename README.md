@@ -4,7 +4,9 @@ Some take aways (at least for me) from working on the issues raised by the revie
 
 ## I. MCC vs F1: in the range of $0$ and $\alpha * 0.1348845$
 In our simulation study the F1 and MCC values are very similar in all settings. Why does this happen? Especially with MCC ranging in theory from -1 (complete disaster with respect to classification) to +1 (overachiever) while F1 has a range from 0 to 1?
-I think that the similarity between F1 and MCC values in our simulation study comes from the excess of negatives which are common in high dimensional variable selection problems. To be more specific, MCC is defined as
+
+### 1. Negative values are very unlikely
+I think the similarity between F1 and MCC values in our simulation study is caused by the excess of negatives which are common in high dimensional variable selection problems. To be more specific, MCC is defined as
 
 $$\frac{(TP * TN) - (FP * FN)}{\sqrt{(TP + FP) * (TP + FN) * (TN + FP) * (TN +FN)}}$$
  	
@@ -14,6 +16,7 @@ $$\frac{2TP}{2TP+FP+FN}.$$
 
 Even if MCC can become negative in theory (if $(FP * FN)>(TP * TN)$ ) this is very unlikely to happen in a variable selection problem where one assumes *sparsity* ( $s \ll p$ like in our settings) and small selected subsets ( $k$ ). In these settings the *number of negatives dominates the number of positives* strongly. As long as a selected subset size is rather small compared to the number of variables ( $k \ll p$ ) we will always label most of the variables correctly as negative just by chance/simply because we have to. Consequently, even if all selected variables are wrongly labeled as positive, the total number of FP and FN is small compared to TN. Thus, as long as we will label at least one variable correctly as positive ( $TP \geq 1$ ) we will always have a positives numerator. In our simulation in nearly every run at least one variable is correctly identified as a positive, hence, we have only a handful of negative MCC values.
 
+### 2. A (rough) approximation for MCC
 Now, let us rewrite MCC as 
 $$\frac{(TP * TN)}{\sqrt{(TP + FP) * (TP + FN) * (TN + FP) * (TN +FN)}} -$$ 
 $$\frac{(FP * FN)}{\sqrt{(TP + FP) * (TP + FN) * (TN + FP) * (TN +FN)}}.$$
@@ -56,5 +59,8 @@ $$\Delta(k,s, \alpha) := \frac{\alpha \min(k,s)}{\sqrt{k * s}} - \frac{\alpha \m
 From this it follows directly 
 $$0 \leq \Delta(k,s, \alpha) \leq \alpha * 0.1348845 \leq 0.1348845.$$
 
+### 3. Numerical reults for the similarity of F1 and ${MCC_oTN}$
 
+
+Comparing MCC and $MCC_{oTN}$ it is clear that MCC will always be smaller because it has subtraction term and $\frac{TN}{\sqrt{(TN + FP) * (TN +FN)}} \leq \frac{TN}{\sqrt{(TN ) * (TN)}}$. The first is the from the first term of MCC while the latter is from the approximation. Hence, $MCC_{oTN}$ might be only a (rough) approximation but I think it gives a glimpse into the reasons for the similarity between F1 and MCC in high dimensional settings. 
 
