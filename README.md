@@ -59,7 +59,7 @@ $$\Delta(k,s, \alpha) := \frac{\alpha \min(k,s)}{\sqrt{k * s}} - \frac{\alpha \m
 From this it follows directly 
 $$0 \leq \Delta(k,s, \alpha) \leq \alpha * 0.1348845 \leq 0.1348845.$$
 
-### 3. Numerical reults for the similarity of F1 and ${MCC_oTN}$
+### 3. Numerical reults for the similarity of F1 and $MCC_{oTN}$
 
 
 Comparing MCC and $MCC_{oTN}$ it is clear that MCC will always be smaller because it has subtraction term and $\frac{TN}{\sqrt{(TN + FP) * (TN +FN)}} \leq \frac{TN}{\sqrt{(TN ) * (TN)}}$. The first is the from the first term of MCC while the latter is from the approximation. Hence, $MCC_{oTN}$ might be only a (rough) approximation but I think it gives a glimpse into the reasons for the similarity between F1 and MCC in high dimensional settings. 
