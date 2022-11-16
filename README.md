@@ -60,7 +60,7 @@ From this it follows directly
 $$0 \leq \Delta(k,s, \alpha) \leq \alpha * 0.1348845 \leq 0.1348845.$$
 
 ### 3. Numerical examples for the similarity of F1 and $MCC_{oTN}$
-I calculated all F1 and $MCC_{oTN}$ values based on all possible TP, TN, FP and FN for our settings ( $p=100,500,1000$ ) with subset sizes $k=1,\dots,50$ and number of true direct predictors $s=10$. Again, $\alpha$ controlls the number of TP for a given subset size k by $\alpha min(k,s)$. For example for $k,s=10$ and $\alpha=0.5$ we have $0.5 \min(10,10) = 5$ TP while for $k=4$ and $s=10$ the same $\alpha$ gives only $0.5 \min(4,10) = 2$ TP. The formulation $\alpha \min(k,s)$ with $0 \leq \alpha \leq 1$ guarantees that we will have a maximum $TP=s$ even for $k>s$. 
+I calculated all F1 and $MCC_{oTN}$ values based on all possible TP, TN, FP and FN for our settings ( $p=100,500,1000$ ) with subset sizes $k=1,\dots,50$ and number of true direct predictors $s=10$. Again, $\alpha$ controlls the number of TP for a given subset size k by $\alpha min(k,s)$. For example for $k,s=10$ and $\alpha=0.5$ we have $0.5 \min(10,10) = 5$ TP while for $k=4$ and $s=10$ the same $\alpha$ gives only $0.5 \min(4,10) = 2$ TP. The formulation $\alpha \min(k,s)$ with $0 \leq \alpha \leq 1$ guarantees that we will have a maximum $TP=s$ even for $k>s$. The following images
 
 ![alt text](https://github.com/moritz-hanke/bss/blob/0d63fc847f728861de894746829e17b86abe5524/images/binary_classifiers/p_MCCoTN_F1_full.png)
 
