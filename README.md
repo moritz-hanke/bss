@@ -62,7 +62,7 @@ $$0 \leq \Delta(k,s, \alpha) \leq \alpha * 0.1348845 \leq 0.1348845.$$
 ### 3. Numerical examples for the similarity of F1 and $MCC_{oTN}$
 I calculated all F1 and $MCC_{oTN}$ values based on all possible TP, TN, FP and FN for our settings ( $p=100,500,1000$ ) with subset sizes $k=1,\dots,50$ and number of true direct predictors $s=10$. Again, $\alpha$ controlls the number of TP for a given subset size k by $\alpha min(k,s)$. For example for $k,s=10$ and $\alpha=0.5$ we have $TP = 0.5 \min(10,10) = 5$ while for $k=4$ and $s=10$ the same $\alpha$ gives only $TP=0.5 \min(4,10) = 2$. The formulation $\alpha \min(k,s)$ with $0 \leq \alpha \leq 1$ guarantees that we will have a maximum $TP=s$ even for $k>s$. The following figure shows the difference between $MCC_{}oTN$ and F1.
 
-![alt text](https://github.com/moritz-hanke/bss/blob/f8590cc48c94312c2b12063a59badc2581186265/plots/binary%20classification/MCCoTN_F1.png)
+![alt text](https://github.com/moritz-hanke/bss/blob/e46d0d90936671d16e0bc2647042839847f4ad35/plots/binary%20classification/MCCoTN_F1.png)
 
 First, since $MCC_{oTN}$ and F1 do not rely on TN values we see no difference between the plots with respect to $p$ because does only alter TN. Second, around $k/s=1$, i.e. when the subset size $k$ and the number of true direct predictors $s$ are similar the measures $F1$ and $MCC_{oTN}$ have similar values. As expected their are exactly the same for $k=s$. Third, we see that the generell difference between these two measures is not too high.
 
@@ -71,4 +71,4 @@ It is clear that MCC has alwawys to be smaller than $MCC_{oTN}$ because $MCC$s s
 
 The following figure shows the difference between $MCC_{oTN}$ and F1. I used the same settings from above.
 
-![alt text](https://github.com/moritz-hanke/bss/blob/f8590cc48c94312c2b12063a59badc2581186265/plots/binary%20classification/MCC_F1.png)
+![alt text](https://github.com/moritz-hanke/bss/blob/e46d0d90936671d16e0bc2647042839847f4ad35/plots/binary%20classification/MCC_F1.png)
