@@ -2,7 +2,7 @@
 
 Some take aways (at least for me) from working on the issues raised by the reviewers:
 
-## I. MCC vs F1: in the range of $0$ and $\alpha * 0.1348845$
+## I. MCC vs F1: Roughly in the range of $0$ and $\alpha * 0.1348845$
 In our simulation study the F1 and MCC values are very similar in all settings. Why does this happen? Especially with MCC ranging in theory from -1 (complete disaster with respect to classification) to +1 (overachiever) while F1 has a range from 0 to 1?
 
 ### 1. Negative values are very unlikely
