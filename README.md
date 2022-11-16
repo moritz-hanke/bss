@@ -2,7 +2,7 @@
 
 Some take aways (at least for me) from working on the issues raised by the reviewers:
 
-## I. MCC vs F1: Roughly in the range of $0$ and $\alpha * 0.1348845$
+## I. MCC vs F1 or roughly somewhere between $0$ and $\alpha * 0.1348845$
 In our simulation study the F1 and MCC values are very similar in all settings. Why does this happen? Especially with MCC ranging in theory from -1 (complete disaster with respect to classification) to +1 (overachiever) while F1 has a range from 0 to 1?
 
 ### 1. Negative values are very unlikely
@@ -62,5 +62,6 @@ $$0 \leq \Delta(k,s, \alpha) \leq \alpha * 0.1348845 \leq 0.1348845.$$
 ### 3. Numerical reults for the similarity of F1 and $MCC_{oTN}$
 
 
-Comparing MCC and $MCC_{oTN}$ it is clear that MCC will always be smaller because it has subtraction term and $\frac{TN}{\sqrt{(TN + FP) * (TN +FN)}} \leq \frac{TN}{\sqrt{(TN ) * (TN)}}$. The first is the from the first term of MCC while the latter is from the approximation. Hence, $MCC_{oTN}$ might be only a (rough) approximation but I think it gives a glimpse into the reasons for the similarity between F1 and MCC in high dimensional settings. 
+Comparing MCC and $MCC_{oTN}$ it is clear that MCC will always be smaller because it has subtraction term and for its first term we have $\frac{TN}{\sqrt{(TN + FP) * (TN +FN)}} \leq \frac{TN}{\sqrt{(TN ) * (TN)}}$. The latter we used in the approximation. 
+Hence, $MCC_{oTN}$ might be only a (rough) approximation but I think it gives a glimpse into the reasons for the similarity between F1 and MCC in high dimensional settings. 
 
