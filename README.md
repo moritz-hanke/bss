@@ -69,6 +69,8 @@ First, since $MCC_{oTN}$ and F1 do not rely on TN values we see no difference be
 ### 4. Comapring $MCC$ with $MCC_{oTN}$ and $F1$
 It is clear that MCC has alwawys to be smaller than $MCC_{oTN}$ because $MCC$s second term is negative and its first term contains $\frac{TN}{\sqrt{(TN + FP) * (TN +FN)}}$ which of course is smaller than the approximation $\frac{TN}{\sqrt{(TN ) * (TN)}}$ we used. How far 'off' is $MCC_{oTN}$ from the 'true' $MCC$ and from $F1$?
 
-The following figure shows the difference between $MCC_{oTN}$ and F1. I used the same settings from above.
+The following figure shows the difference between $MCC$ and F1. I used the same settings from above.
 
 ![alt text](https://github.com/moritz-hanke/bss/blob/e46d0d90936671d16e0bc2647042839847f4ad35/plots/binary%20classification/MCC_F1.png)
+
+Of course, the number of variables $p$ makes a difference between the plots since it will affect the TN and therefore the MCC. However, the figure clearly shows that even for our medium setting the difference between MCC and F1 is rather small independent of the subset size and number of TP (controlled by $\alpha$). Further, for the medium and high setting $MCC$ looks similar to $MCC_{oTN}$, i.e. our approximation seems to be fair. 
