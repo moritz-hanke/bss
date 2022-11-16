@@ -60,10 +60,15 @@ From this it follows directly
 $$0 \leq \Delta(k,s, \alpha) \leq \alpha * 0.1348845 \leq 0.1348845.$$
 
 ### 3. Numerical examples for the similarity of F1 and $MCC_{oTN}$
-I calculated all F1 and $MCC_{oTN}$ values based on all possible TP, TN, FP and FN for our settings ( $p=100,500,1000$ ) with subset sizes $k=1,\dots,50$ and number of true direct predictors $s=10$. Again, $\alpha$ controlls the number of TP for a given subset size k by $\alpha min(k,s)$. For example for $k,s=10$ and $\alpha=0.5$ we have $0.5 \min(10,10) = 5$ TP while for $k=4$ and $s=10$ the same $\alpha$ gives only $0.5 \min(4,10) = 2$ TP. The formulation $\alpha \min(k,s)$ with $0 \leq \alpha \leq 1$ guarantees that we will have a maximum $TP=s$ even for $k>s$. The following images
+I calculated all F1 and $MCC_{oTN}$ values based on all possible TP, TN, FP and FN for our settings ( $p=100,500,1000$ ) with subset sizes $k=1,\dots,50$ and number of true direct predictors $s=10$. Again, $\alpha$ controlls the number of TP for a given subset size k by $\alpha min(k,s)$. For example for $k,s=10$ and $\alpha=0.5$ we have $TP = 0.5 \min(10,10) = 5$ while for $k=4$ and $s=10$ the same $\alpha$ gives only $TP=0.5 \min(4,10) = 2$. The formulation $\alpha \min(k,s)$ with $0 \leq \alpha \leq 1$ guarantees that we will have a maximum $TP=s$ even for $k>s$. The following figure shows the difference between $MCC_{}oTN$ and F1.
 
 ![alt text](https://github.com/moritz-hanke/bss/blob/0d63fc847f728861de894746829e17b86abe5524/images/binary_classifiers/p_MCCoTN_F1_full.png)
 
-Comparing MCC and $MCC_{oTN}$ it is clear that MCC will always be smaller because it has subtraction term and for its first term we have $\frac{TN}{\sqrt{(TN + FP) * (TN +FN)}} \leq \frac{TN}{\sqrt{(TN ) * (TN)}}$. The latter we used in the approximation. 
-Hence, $MCC_{oTN}$ might be only a (rough) approximation but I think it gives a glimpse into the reasons for the similarity between F1 and MCC in high dimensional settings. 
+First, since $MCC_{oTN}$ and F1 do not rely on TN values we see no difference between the plots with respect to $p$ because does only alter TN. Second, around $k/s=1$, i.e. when the subset size $k$ and the number of true direct predictors $s$ are similar the measures $F1$ and $MCC_{oTN}$ have similar values. As expected their are exactly the same for $k=s$. Third, we see that the generell difference between these two measures is not too high.
 
+### 4. Comapring $MCC$ with $MCC_{oTN}$ and $F1$
+It is clear that MCC has alwawys to be smaller than $MCC_{oTN}$ because $MCC$s second term is negative and its first term contains $\frac{TN}{\sqrt{(TN + FP) * (TN +FN)}}$ which of course is smaller than the approximation $\frac{TN}{\sqrt{(TN ) * (TN)}}$ we used. How far 'off' is $MCC_{oTN}$ from the 'true' $MCC$ and from $F1$?
+
+The following figure shows the difference between $MCC_{oTN}$ and F1. I used the same settings from above.
+
+![alt text](https://github.com/moritz-hanke/bss/blob/84c4699944842fc7aae14b6d6037f4b20543f7df/images/binary_classifiers/p_MCC_F1_full.png)
