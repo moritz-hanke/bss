@@ -52,7 +52,7 @@ as the difference with the highest number of **possible** (!) TP for a given sub
 
 While it might be possible to find the range of $\Delta(k,s)$ algebraically I used Wolfram Alpha to find it (numerically) to speed things up:  
 $$0 \leq \Delta(k,s) \leq 0.1348845$$
-We now have fixed upper and lower limits for the difference between the two performance measures for all $k,s \geq 1$. And it is not really big. And it gets even smaller since we have only looked at the case when all selected variables are TPs ( $k < s$ ) or all positives have been selected ( $k \geq s$ ), i.e. the highest possible numerator. As soon as the number of TPs (the numerator in both measures) gets smaller, i.e. $TP < \min(k,s)$, the upper limit of the range of the differences of the two measures gets smaller too. 
+We now have fixed upper and lower limits for the difference between the two performance measures for all $k,s \geq 1$. And it is not really big. And it gets even smaller since we have only looked at the case when all selected variables are TPs ( $k < s$ ) or all positives have been selected ( $k \geq s$ ), i.e. the highest possible numerator. As soon as the number of TPs (the numerator of both measures) gets smaller, i.e. $TP < \min(k,s)$, the upper limit of the range of the differences of the two measures gets smaller too. 
 
 Augmenting $\Delta(k,s)$ with $0 < \alpha \leq 1$ to denote the proportion of possible TPs found for a given subset size[^1] $k$ we get
 $$\Delta(k,s, \alpha) := \frac{\alpha \min(k,s)}{\sqrt{k * s}} - \frac{\alpha \min(k,s)}{0.5*(k+s)}.$$
