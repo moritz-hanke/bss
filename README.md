@@ -29,7 +29,7 @@ So it might be fair to say that $(TN + FP) \approx (TN +FN) \approx TN$ is not a
 $$\sqrt{(TN + FP) * (TN +FN)} \approx \sqrt{TN} * \sqrt{TN} = TN$$ 
 in the denominator. Therefore I will neglect this term for my further argumentation. 
 
-To give an impression of the highest possible value for the second term in our settings I will use the medium setting for an numerical example. We have $s=10$ true direct predictors (positives), a maximum subset size of $k=15$ and $p=500$ variables. If a selected subset in this setting is completely wrong, i.e. it consists only of FPs, we have FP=15 and FN =10 while still having 475 TN. In this case the second term will be not higher than 0.0251233, its highest possible value (in the high dimensional setting with $p=1000$ it is even smaller, i.e. 0.002).
+To give an impression of the highest possible value for the second term in our settings I will use the medium setting for an numerical example. We have $s=10$ true direct predictors (positives), a maximum subset size of $k=15$ and $p=500$ variables. If a selected subset in this setting is completely wrong, i.e. it consists only of FPs, we have FP=15 and FN =10 while still having 475 TN. In this case the second term will have its highest possible value for the medium setting, that is 0.0251233. In the high dimensional setting with $p=1000$ the highest possible value for the second term becomes even smaller (0.002) because only the number of TN will change from 475 to 975 while all other numbers stay constant.
 
 Using $\sqrt{(TN + FP) * (TN +FN)} \approx TN$ also in the first term of the MCC we get 
 $$\frac{(TP * TN)}{\sqrt{(TP + FP) * (TP + FN) * (TN + FP) * (TN +FN)}} \approx \frac{(TP * TN)}{\sqrt{(TP + FP) * (TP + FN)} * TN} = \frac{TP}{\sqrt{(TP + FP) * (TP + FN)}}.$$ 
@@ -48,29 +48,33 @@ So far we know that the $MCC_{oTN}$ will always be at least as high as the F1 sc
 
 $$\Delta(k,s) := \frac{\min(k,s)}{\sqrt{k * s}} - \frac{\min(k,s)}{0.5*(k+s)}.$$
 
-as the difference with the highest number of possible TP for a given subset size $k$. NOTE: we allow also the case $k>s$.
+as the difference with the highest number of **possible** (!) TP for a given subset size $k$. NOTE: we allow also the case $k>s$.
 
 While it might be possible to find the range of $\Delta(k,s)$ algebraically I used Wolfram Alpha to find it (numerically) to speed things up:  
 $$0 \leq \Delta(k,s) \leq 0.1348845$$
-We now have fixed upper and lower limits for the difference between the two performance measures for all $k,s \geq 1$. And it is not really big. And it gets even smaller since we have only looked at the case when all selected variables are TPs ( $k < s$ ) or all positives have been selected ( $ k \geq s$ ), i.e. the highest possible numerator. As soon as the number of TPs gets smaller the upper limit for the range gets smaller too.
+We now have fixed upper and lower limits for the difference between the two performance measures for all $k,s \geq 1$. And it is not really big. And it gets even smaller since we have only looked at the case when all selected variables are TPs ( $k < s$ ) or all positives have been selected ( $k \geq s$ ), i.e. the highest possible numerator. As soon as the number of TPs (the numerator of both measures) gets smaller, i.e. $TP < \min(k,s)$, the upper limit of the range of the differences of the two measures gets smaller too. 
 
-Augmenting $\Delta(k,s)$ with $0 < \alpha \leq 1$ to denote the proportion of possible TPs found for a given subset size $k$ we get
+Augmenting $\Delta(k,s)$ with $0 < \alpha \leq 1$ to denote the proportion of possible TPs found for a given subset size[^1] $k$ we get
 $$\Delta(k,s, \alpha) := \frac{\alpha \min(k,s)}{\sqrt{k * s}} - \frac{\alpha \min(k,s)}{0.5*(k+s)}.$$
+
 From this it follows directly 
 $$0 \leq \Delta(k,s, \alpha) \leq \alpha * 0.1348845 \leq 0.1348845.$$
 
+[^1]: For example for $k,s=10$ and $\alpha=0.5$ we have $TP = 0.5 \min(10,10) = 5$ while for $k=4$ and $s=10$ the same $\alpha$ gives only $TP=0.5 \min(4,10) = 2$. The formulation $\alpha \min(k,s)$ with $0 \leq \alpha \leq 1$ guarantees that we will have a maximum $TP=s$ even for $k>s$.
+
 ### 3. Numerical examples for the similarity of F1 and $MCC_{oTN}$
-I calculated all F1 and $MCC_{oTN}$ values based on all possible TP, TN, FP and FN for our settings ( $p=100,500,1000$ ) with subset sizes $k=1,\dots,50$ and number of true direct predictors $s=10$. Again, $\alpha$ controlls the number of TP for a given subset size k by $\alpha min(k,s)$. For example for $k,s=10$ and $\alpha=0.5$ we have $TP = 0.5 \min(10,10) = 5$ while for $k=4$ and $s=10$ the same $\alpha$ gives only $TP=0.5 \min(4,10) = 2$. The formulation $\alpha \min(k,s)$ with $0 \leq \alpha \leq 1$ guarantees that we will have a maximum $TP=s$ even for $k>s$. The following figure shows the difference between $MCC_{}oTN$ and F1.
+To get a better impression of this range I calculated all F1 and $MCC_{oTN}$ values based on all possible TP, TN, FP and FN for our simulation settings: $p=100,500,1000$ variables, subset sizes $k=1,\dots,50$ and number of true direct predictors $s=10$. Again, $\alpha$ controls the number of TP for a given subset size k by $\alpha \min(k,s)$. The following figure shows the difference between $MCC_{oTN}$ and F1.
 
 ![alt text](https://github.com/moritz-hanke/bss/blob/e46d0d90936671d16e0bc2647042839847f4ad35/plots/binary%20classification/MCCoTN_F1.png)
 
-First, since $MCC_{oTN}$ and F1 do not rely on TN values we see no difference between the plots with respect to $p$ because does only alter TN. Second, around $k/s=1$, i.e. when the subset size $k$ and the number of true direct predictors $s$ are similar the measures $F1$ and $MCC_{oTN}$ have similar values. As expected their are exactly the same for $k=s$. Third, we see that the generell difference between these two measures is not too high.
+First, since $MCC_{oTN}$ and F1 do not rely on TN values we see no difference between the plots with respect to $p$ because the number of variables does only alter TN if $k$ and $s$ are unchanged. Second, around $k \approx s$ the $F1$ and $MCC_{oTN}$ have similar values. For $k=s$ their values are identical as expected. Third, we see that the generell difference between these two measures is not too high, even if k is five times as high as s.
 
-### 4. Comapring $MCC$ with $MCC_{oTN}$ and $F1$
-It is clear that MCC has alwawys to be smaller than $MCC_{oTN}$ because $MCC$s second term is negative and its first term contains $\frac{TN}{\sqrt{(TN + FP) * (TN +FN)}}$ which of course is smaller than the approximation $\frac{TN}{\sqrt{(TN ) * (TN)}}$ we used. How far 'off' is $MCC_{oTN}$ from the 'true' $MCC$ and from $F1$?
-
-The following figure shows the difference between $MCC$ and F1. I used the same settings from above.
+### 4. Comparing $MCC$ with $F1$ (and $MCC_{oTN}$)
+MCC relies on TN, thus it is reasonable to assume that it will differ more from the F1. The following figure shows the difference between $MCC$ and F1. I used the same settings from above.
 
 ![alt text](https://github.com/moritz-hanke/bss/blob/e46d0d90936671d16e0bc2647042839847f4ad35/plots/binary%20classification/MCC_F1.png)
 
-Of course, the number of variables $p$ makes a difference between the plots since it will affect the TN and therefore the MCC. However, the figure clearly shows that even for our medium setting the difference between MCC and F1 is rather small independent of the subset size and number of TP (controlled by $\alpha$). Further, for the medium and high setting $MCC$ looks similar to $MCC_{oTN}$, i.e. our approximation seems to be fair. 
+Of course, the number of variables $p$ makes a difference between the plots since it will affect the TN and therefore the MCC. For small $p$ we see a rather heterogenous picture for the differences between MCC and F1. If TP is small (i.e. a small $\alpha$) we see rather big differences ( $>0.25$ ) while for higher TP values (i.e. higher $\alpha$) the measure are rather similar. However, the figure clearly shows that even for our medium setting the difference between MCC and F1 is rather small independent of the subset size and the number of TP (controlled by $\alpha$). In this cases the difference looks to the differences between $MCC_{oTN}$ and F1, i.e. our approximation seems to be fair. 
+
+to be continued...
+<!-- It is clear that MCC has always to be smaller than $MCC_{oTN}$ because MCC's second term is negative and its first term contains $\frac{TN}{\sqrt{(TN + FP) * (TN +FN)}}$ which of course is smaller than the approximation $\frac{TN}{\sqrt{(TN ) * (TN)}}$ we used. -->
