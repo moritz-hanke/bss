@@ -44,7 +44,7 @@ Since $k,s \geq 1$ we have $0.5 * (k+s) \geq \sqrt{k*s}$ and therefore
 $$MCC_{oTN} \geq F1.$$ 
 For the special case $k=s$ we have $MCC_{oTN} = F1$. 
 
-So far we know that the $MCC_{oTN}$ will always be at least as high as the F1 score (assuming an excess of TN). But we still want to know the range of their difference. To answer this question we first have to take the TP in numerators into account. For $k < s$ its highest possible value is $k$ while for $k \geq s$ it is $s$. Therefore we define
+So far we know that the $MCC_{oTN}$ will always be at least as high as the F1 score. But we still want to know the range of their difference. To answer this question we first have to take the TP in numerators into account. For $k < s$ its highest possible value is $k$ while for $k \geq s$ it is $s$. Therefore we define
 
 $$\Delta(k,s) := \frac{\min(k,s)}{\sqrt{k * s}} - \frac{\min(k,s)}{0.5*(k+s)}.$$
 
