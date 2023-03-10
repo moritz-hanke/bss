@@ -207,10 +207,7 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
       Precision <- TP/(TP + FP)
       Accuracy <- TP/s
       
-      
-      FSS_beta <- 
-        solve(t(X[,estimated_non_zeros_FSS]) %*% X[,estimated_non_zeros_FSS]) %*% 
-        t(X[,estimated_non_zeros_FSS]) %*% Y
+    
       
       FSS_results <- tibble(
         method="FSS",
