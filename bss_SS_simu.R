@@ -67,7 +67,7 @@ Alpha <- seq(0.1,1,0.1)
 
 B <- 200
 cutoff <- 0.9
-
+PFER <- 1
 
 Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
   print(sim_n)
@@ -112,7 +112,7 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
       Y <- X %*% beta + e 
       Y <- scale(Y, scale = FALSE)
       
-      q <- floor(sqrt(0.8*P))
+      q <- floor(sqrt(PFER*(2*cutoff-1)*P))
       ### new BSS
       
      
@@ -181,7 +181,7 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
         
         FSS_b <- 
           lars::lars(x=X[n_sample,], y=Y[n_sample], 
-                     max.steps = min(max.k q), type = "stepwise",
+                     max.steps = min(max.k, q), type = "stepwise",
                      use.Gram=FALSE)
         
         maxk_selected <- unlist(FSS_b$actions)
