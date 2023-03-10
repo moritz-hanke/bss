@@ -339,8 +339,8 @@ Loop_Sim_n <- do.call(rbind, Loop_Sim_n)
 
 Loop_Sim_n$method <- 
   factor(Loop_Sim_n$method, 
-         levels = c(paste("Enet", seq(0.1, 1, 0.1)), "FSS"), 
-         labels = c(paste("Enet", seq(0.1, 1, 0.1)), "FSS"))
+         levels = c(paste("Enet", seq(0.1, 1, 0.1)), "FSS", "BSS"), 
+         labels = c(paste("Enet", seq(0.1, 1, 0.1)), "FSS", "BSS"))
 
 
 ggplot(Loop_Sim_n,
