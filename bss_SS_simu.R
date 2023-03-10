@@ -350,8 +350,14 @@ ggplot(Loop_Sim_n,
   scale_fill_manual(values=c(
     colorRampPalette(c("#FF99CC", "#B266FF"))(9),
     "#FF3333",
-    "#0080FF"
+    "#0080FF",
+    "#00CC00"
   )) + 
   ylim(0,1)
 
-
+saveRDS(Loop_Sim_n, paste("~/Documents/BIPS/bss/data/SS_", P,"_",N,"_", 
+                          beta_position,
+                          "_",
+                          corr_type,
+                          ".RDS",
+                          sep="")))
