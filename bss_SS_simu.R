@@ -60,90 +60,13 @@ beta_position <- "spread"
 
 
 
-Sim_n <- 10
+Sim_n <- 2
 
 max.k <- 15
 Alpha <- seq(0.1,1,0.1)
+
+B <- 200
 cutoff <- 0.9
-
-
-glmnet.enet <- function(x, y, q, alpha, type = c("conservative", "anticonservative"), ...) {
-  if (!requireNamespace("glmnet", quietly=TRUE))
-    stop("Package ", sQuote("glmnet"), " needed but not available")
-  
-  if (is.data.frame(x)) {
-    message("Note: ", sQuote("x"),
-            " is coerced to a model matrix without intercept")
-    x <- model.matrix(~ . - 1, x)
-  }
-  
-  if ("lambda" %in% names(list(...)))
-    stop("It is not permitted to specify the penalty parameter ", sQuote("lambda"),
-         " for lasso when used with stability selection.")
-  
-  ## fit model
-  type <- match.arg(type)
-  if (type == "conservative")
-    fit <- suppressWarnings(glmnet::glmnet(x, y, pmax = q, alpha = alpha,...))
-  if (type == "anticonservative")
-    fit <- glmnet::glmnet(x, y, alpha = alpha, dfmax = q - 1, ...)
-  
-  ## which coefficients are non-zero?
-  selected <- predict(fit, type = "nonzero")
-  selected <- selected[[length(selected)]]
-  ret <- logical(ncol(x))
-  ret[selected] <- TRUE
-  names(ret) <- colnames(x)
-  ## compute selection paths
-  cf <- fit$beta
-  sequence <- as.matrix(cf != 0)
-  ## return both
-  return(list(selected = ret, path = sequence))
-}
-
-bss <- function(x, y, q, type = c("conservative", "anticonservative"), ...) {
-  if (!requireNamespace("bestridge", quietly=TRUE))
-    stop("Package ", sQuote("bestridge"), " needed but not available")
-  
-  if (is.data.frame(x)) {
-    message("Note: ", sQuote("x"),
-            " is coerced to a model matrix without intercept")
-    x <- model.matrix(~ . - 1, x)
-  }
-  
-  if ("lambda" %in% names(list(...)))
-    stop("It is not permitted to specify the penalty parameter ", sQuote("lambda"),
-         " for lasso when used with stability selection.")
-  
-  ## fit model
-  fit <- bsrr(x=X, y=Y, 
-                     family="gaussian", 
-                     method="sequential", 
-                     tune="cv",
-                     s.list=q,
-                     lambda.list = 0)
-  
-  ## which coefficients are non-zero?
-  selected <- which(fit$beta != 0)
-  ## check if variables are removed again from the active set
-  ## and remove these from selected
-  if (any(selected < 0)) {
-    idx <- which(selected < 0)
-    idx <- c(idx, which(selected %in% abs(selected[idx])))
-    selected <- selected[-idx]
-  }
-  
-  ret <- logical(ncol(x))
-  ret[selected] <- TRUE
-  names(ret) <- colnames(x)
-  ## compute selection paths
-  cf <- fit$beta
-  sequence <- t(cf != 0)
-  ## return both
-  return(list(selected = ret, path = sequence))
-}
-
-
 
 
 Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
@@ -189,74 +112,93 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
       Y <- X %*% beta + e 
       Y <- scale(Y, scale = FALSE)
       
-      
+      q <- floor(sqrt(0.8*P))
       ### new BSS
-      debug(
-      BSS <- stabsel(x = X, y = Y,
-                     fitfun = bss, cutoff = 0.9,
-                     PFER = 1)
+      
+     
+      
+      Loop_BSS_B <- lapply(1:B, function(b){
+        
+        set.seed(b)
+        n_sample <- sample(1:N, N/2)
+        
+        BSS_b <- bsrr(x=X[n_sample,], y=Y[n_sample],
+                      family="gaussian",
+                      method="sequential",
+                      tune="gic",
+                      s.list=1:q,
+                      lambda.list = 0)
+        
+        BSS_b$beta.all[[1]] != 0
+      })
+      
+      prob_selction_BSS <- Reduce("+", Loop_BSS_B)/B
+      estimated_non_zeros_BSS <- 
+        which(apply(prob_selction_BSS, 1, function(i){any(i >= cutoff)}))
+      
+      TP <- sum(estimated_non_zeros_BSS %in% non_zero_indices)
+      FP <- length(estimated_non_zeros_BSS)-TP
+      FN <- s-TP
+      F1 <- TP/(TP + 0.5*(FP+FN))
+      Precision <- TP/(TP + FP)
+      Accuracy <- TP/s
+      
+      
+      
+      BSS_results <- tibble(
+        method="BSS",
+        alpha=NA,
+        lambda = NA,
+        RSS = NA,
+        RSS_corrected = NA,
+        est_det_IFIM = NA,
+        est_det_FIM = NA,
+        k=length(estimated_non_zeros_BSS),
+        TP,
+        FP,
+        FN,
+        F1,
+        Precision,
+        Accuracy,
+        n,
+        p=P,
+        s,
+        snr,
+        rho=Rho,
+        sim.n = sim_n,
+        beta_position = beta_position,
+        corr_type = corr_type,
+        cutoff = cutoff
       )
-      # BSS <- bsrr(x=X, y=Y, 
-      #             family="gaussian", 
-      #             method="sequential", 
-      #             tune="cv",
-      #             s.list=1:max.k,
-      #             lambda.list = 0, nfolds=cv.number)
-      # 
-      # estimated_non_zeros_BSS <- which(BSS$beta != 0)
-      # 
-      # TP <- sum(estimated_non_zeros_BSS %in% non_zero_indices)
-      # FP <- length(estimated_non_zeros_BSS)-TP
-      # FN <- s-TP
-      # F1 <- TP/(TP + 0.5*(FP+FN))
-      # Precision <- TP/(TP + FP)
-      # Accuracy <- TP/s
-      # 
-      # if(length(estimated_non_zeros_BSS) <= 1){
-      #   est_det_IFIM <- 1
-      #   est_det_FIM <- 1
-      # }else{
-      #   est_det_IFIM <- det(cov(X[,estimated_non_zeros_BSS]))
-      #   est_det_FIM <- det(solve(cov(X[,estimated_non_zeros_BSS])))
-      # }
-      # 
-      # 
-      # BSS_results <- tibble(
-      #   method="BSS",
-      #   alpha=NA,
-      #   lambda = NA,
-      #   RSS = sum((Y-X %*% BSS$beta)^2),
-      #   RSS_corrected = NA,
-      #   est_det_IFIM = est_det_IFIM,
-      #   est_det_FIM = est_det_FIM,
-      #   k=length(estimated_non_zeros_BSS),
-      #   TP,
-      #   FP,
-      #   FN,
-      #   F1,
-      #   Precision,
-      #   Accuracy,
-      #   n,
-      #   p=P,
-      #   s,
-      #   snr,
-      #   rho=Rho,
-      #   sim.n = sim_n,
-      #   beta_position = beta_position,
-      #   corr_type = corr_type,
-      #   cv.number = cv.number
-      # )
-      # rm(estimated_non_zeros_BSS)
+      rm(estimated_non_zeros_BSS)
       
       
-      ### begin FSS
+      # FSS
+      Loop_FSS_B <- lapply(1:B, function(b){
+        
+        set.seed(b)
+        n_sample <- sample(1:N, N/2)
+        
+        FSS_b <- 
+          lars::lars(x=X[n_sample,], y=Y[n_sample], 
+                     max.steps = q, type = "stepwise",
+                     use.Gram=FALSE)
+        
+        maxk_selected <- unlist(FSS_b$actions)
+        
+        selection_matrix <- matrix(rep(0, P*max.k), ncol=max.k)
+        
+        for(i in seq_along(maxk_selected)){
+          selection_matrix[maxk_selected[1:i],i] <- 1
+        }
+        
+        selection_matrix
+        
+      })
       
-      stabs_FSS <- stabsel(x = X, y = Y,
-                           fitfun = lars.stepwise, cutoff = 0.9,
-                           PFER = 1)
-      
+      prob_selction_FSS <- Reduce("+", Loop_FSS_B)/B
       estimated_non_zeros_FSS <- 
-        stabs_FSS$selected
+        which(apply(prob_selction_FSS, 1, function(i){any(i >= cutoff)}))
       
       TP <- sum(estimated_non_zeros_FSS %in% non_zero_indices)
       FP <- length(estimated_non_zeros_FSS)-TP
@@ -265,17 +207,10 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
       Precision <- TP/(TP + FP)
       Accuracy <- TP/s
       
-      if(length(estimated_non_zeros_FSS) <= 1){
-        est_det_IFIM <- 1
-        est_det_FIM <- 1
-      }else{
-        est_det_IFIM <- det(cov(X[,estimated_non_zeros_FSS]))
-        est_det_FIM <- det(solve(cov(X[,estimated_non_zeros_FSS])))
-      }
       
-      # FSS_beta <- 
-      #   solve(t(X[,estimated_non_zeros_FSS]) %*% X[,estimated_non_zeros_FSS]) %*% 
-      #   t(X[,estimated_non_zeros_FSS]) %*% Y
+      FSS_beta <- 
+        solve(t(X[,estimated_non_zeros_FSS]) %*% X[,estimated_non_zeros_FSS]) %*% 
+        t(X[,estimated_non_zeros_FSS]) %*% Y
       
       FSS_results <- tibble(
         method="FSS",
@@ -283,8 +218,8 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
         lambda = NA,
         RSS = NA,
         RSS_corrected = NA,
-        est_det_IFIM = est_det_IFIM,
-        est_det_FIM = est_det_FIM,
+        est_det_IFIM = NA,
+        est_det_FIM = NA,
         k=length(estimated_non_zeros_FSS),
         TP,
         FP,
@@ -310,16 +245,39 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
       
       Enet_results <- lapply(Alpha, function(i){
         
-        stabs_Enet <- 
-          
-          stabsel(x = X, y = Y,
-                  fitfun = glmnet.enet, 
-                  args.fitfun=c(alpha=i), 
-                  cutoff = cutoff, 
-                  PFER = 1)
-        estimated_non_zeros_Enet <- 
-          as.numeric(stabs_Enet$selected)
+        Enet <- glmnet(x=X, y=Y, alpha = i, 
+               nlambda = 1000, 
+               intercept = F)
         
+        
+        
+        n_non_zeros <- apply(Enet$beta, 2, function(x){
+          sum(x != 0)
+        })
+        
+        
+        lambda_indices <- which(n_non_zeros <= q)
+        
+        Enet_lambdas <- Enet$lambda[lambda_indices]
+        
+        Loop_Enet_B <- lapply(1:B, function(b){
+          
+          set.seed(b)
+          n_sample <- sample(1:N, N/2)
+          
+          Enet_b <- 
+            glmnet(x=X, y=Y, alpha = i,
+                   lambda = Enet_lambdas, 
+                   intercept = F)
+          
+          Enet_b$beta != 0
+          
+          
+        })
+        
+        prob_selction_Enet <- Reduce("+", Loop_Enet_B)/B
+        estimated_non_zeros_Enet <- 
+          which(apply(prob_selction_Enet, 1, function(i){any(i >= cutoff)}))
         
         TP <- sum(estimated_non_zeros_Enet %in% non_zero_indices)
         FP <- length(estimated_non_zeros_Enet)-TP
@@ -328,16 +286,7 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
         Precision <- TP/(TP + FP)
         Accuracy <- TP/s
         
-        if(length(estimated_non_zeros_Enet) <= 1){
-          est_det_IFIM <- 1
-          est_det_FIM <- 1
-        }else if(matrixcalc::is.singular.matrix(cov(X[,estimated_non_zeros_Enet]))){
-          est_det_IFIM <- NA
-          est_det_FIM <- NA
-        }else{
-          est_det_IFIM <- det(cov(X[,estimated_non_zeros_Enet]))
-          est_det_FIM <- det(solve(cov(X[,estimated_non_zeros_Enet])))
-        }
+        
         
         tibble(
           method=paste("Enet", i, sep=" "),
@@ -345,8 +294,8 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
           lambda = NA,
           RSS = NA,
           RSS_corrected = NA,
-          est_det_IFIM = est_det_IFIM,
-          est_det_FIM = est_det_FIM,
+          est_det_IFIM = NA,
+          est_det_FIM = NA,
           k=TP+FP,
           TP,
           FP,
@@ -370,7 +319,8 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
       Enet_results <- do.call(rbind, Enet_results)
       
       
-      out <- rbind(#BSS_results,
+      out <- rbind(
+        BSS_results,
         FSS_results,
         Enet_results)
       
