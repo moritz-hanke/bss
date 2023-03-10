@@ -60,7 +60,7 @@ beta_position <- "spread"
 
 
 
-Sim_n <- 2
+Sim_n <- 100
 
 max.k <- 15
 Alpha <- seq(0.1,1,0.1)
@@ -126,7 +126,7 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
                       family="gaussian",
                       method="sequential",
                       tune="gic",
-                      s.list=1:q,
+                      s.list=1:min(max.k, q),
                       lambda.list = 0)
         
         BSS_b$beta.all[[1]] != 0
@@ -181,7 +181,7 @@ Loop_Sim_n <- lapply(1:Sim_n, function(sim_n){
         
         FSS_b <- 
           lars::lars(x=X[n_sample,], y=Y[n_sample], 
-                     max.steps = q, type = "stepwise",
+                     max.steps = min(max.k q), type = "stepwise",
                      use.Gram=FALSE)
         
         maxk_selected <- unlist(FSS_b$actions)
